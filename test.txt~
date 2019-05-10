@@ -1,0 +1,2 @@
+ADDI x9, x9, #3
+ADD x9, x9, x9
