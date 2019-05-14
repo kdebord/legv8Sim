@@ -119,6 +119,28 @@ void legv8Sim::runLine() {
           setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
       }
 
+      if (PGMLines[pgmline].getInstrName() == "ADDS"){
+	long long storeRegValue = getRFILE(PGMLines[pgmline].getStoreReg());
+	long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
+	long long secondOpValue = getRFILE(PGMLines[pgmline].getSecondOperand());
+
+	if (!PGMLines[pgmline].isIsfirstImmediate() && PGMLines[pgmline].isIsSecondImmediate())
+              storeRegValue = std::abs(firstOpValue) + std::abs(secondOpValue);
+          else {
+              std::cout << "ADDI Instruction Syntax Incorrect: Immediate Expected In Second Operand";
+              exit(1);
+          }
+	// store value of Z here
+	long long tempZ = std::abs(storeRegValue) + std::abs(firstOpValue);
+	if ((storeRegValue < 0 && firstOpValue >= 0)
+	    || (storeRegValue >= 0 && secondOpValue < 0 ))
+	  PGMLines[pgmline].setV(false);
+	else if (!((tempZ >= 0 && storeRegValue < 0) || (tempZ < 0 && storeRegValue >= 0)))
+	
+          setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
+	
+      }
+
       if (PGMLines[pgmline].getInstrName() == "SUB") {
           long long storeRegValue = getRFILE(PGMLines[pgmline].getStoreReg());
           long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
@@ -232,6 +254,30 @@ void legv8Sim::runLine() {
           }
           setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
       }
+
+      if (PGMLines[pgmline].getInstrName() == "B")
+	{
+	  pgmline = PGMLines[pgmline].getStoreReg();
+	}
+
+      if (PGMLines[pgmline].getInstrName() == "BR")
+	{
+	  if (PGMLines[pgmline].getStoreReg() == 30)
+	    pgmline = getRFILE(PGMLines[pgmline].getStoreReg()); 
+	}
+      
+      if (PGMLines[pgmline].getInstrName() == "CBZ")
+	{
+	  if (getRFILE(PGMLines[pgmline].getStoreReg()) == 0)
+	    pgmline = PGMLines[pgmline].getFirstOperand();
+	}
+
+      if (PGMLines[pgmline].getInstrName() == "CBNZ")
+	{
+	  // CBNZ 
+	  if (getRFILE(PGMLines[pgmline].getStoreReg()) != 0)
+	    pgmline = PGMLines[pgmline].getFirstOperand();
+	}
 
       pgmline++;
   }

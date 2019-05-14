@@ -51,3 +51,36 @@ bool legv8Line::isIsSecondImmediate() const {
 void legv8Line::setIsSecondImmediate(bool isSecondImmediate) {
     legv8Line::isSecondImmediate = isSecondImmediate;
 }
+
+bool legv8Line::checkV() const{
+  return v;
+}
+
+void legv8Line::setV(bool result){
+    v = result;
+}
+
+bool legv8Line::checkC() const{
+  return c;
+}
+
+void legv8Line::setC(bool result){
+  c = result;
+}
+
+bool legv8Line::checkN() const{
+  return n;
+}
+
+void legv8Line::setN(bool result){
+  n = result;
+}
+
+bool legv8Line::checkZ() const{
+  return z;
+}
+
+void legv8Line::setZ(bool result){
+  z = result;
+}
+
