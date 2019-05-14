@@ -51,3 +51,18 @@ bool legv8Line::isIsSecondImmediate() const {
 void legv8Line::setIsSecondImmediate(bool isSecondImmediate) {
     legv8Line::isSecondImmediate = isSecondImmediate;
 }
+
+bool legv8Line::isIsSecondOperandLabel() const {
+    return isSecondOperandLabel;
+}
+void legv8Line::setSecondOperandLabel(bool isSecondOperandLabel) {
+    legv8Line::isSecondOperandLabel = isSecondOperandLabel;
+}
+
+const std::string &legv8Line::getSecondOperand_Label() const {
+    return secondOperand_Label;
+}
+
+void legv8Line::setSecondOperand_Label(const std::string &secondOperand_Label) {
+    legv8Line::secondOperand_Label = secondOperand_Label;
+}
