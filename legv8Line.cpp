@@ -66,3 +66,35 @@ const std::string &legv8Line::getSecondOperand_Label() const {
 void legv8Line::setSecondOperand_Label(const std::string &secondOperand_Label) {
     legv8Line::secondOperand_Label = secondOperand_Label;
 }
+
+bool legv8Line::checkV() const{
+    return v;
+}
+
+void legv8Line::setV(bool result){
+    v = result;
+}
+
+bool legv8Line::checkC() const{
+    return c;
+}
+
+void legv8Line::setC(bool result){
+    c = result;
+}
+
+bool legv8Line::checkN() const{
+    return n;
+}
+
+void legv8Line::setN(bool result){
+    n = result;
+}
+
+bool legv8Line::checkZ() const{
+    return z;
+}
+
+void legv8Line::setZ(bool result){
+    z = result;
+}

@@ -22,6 +22,7 @@ class legv8Line {
 		std::string instrName;
 		int storeReg, firstOperand, secondOperand;
 		std::string secondOperand_Label;
+        bool v, c, n ,z;
 		bool isfirstImmediate, isSecondImmediate, isSecondOperandLabel;
 public:
 	bool isIsfirstImmediate() const;
@@ -40,7 +41,21 @@ public:
 
 	void setSecondOperand_Label(const std::string &secondOperand_Label);
 
+    bool checkV() const;
 
+    void setV(bool result);
+
+    bool checkC() const;
+
+    void setC(bool result);
+
+    bool checkN() const;
+
+    void setN(bool result);
+
+    bool checkZ() const;
+
+    void setZ(bool result);
 };
 
 

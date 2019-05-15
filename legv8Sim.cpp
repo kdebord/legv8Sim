@@ -285,7 +285,7 @@ void legv8Sim::runLine() {
           setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
       }
 
-      if (PGMLines[pgmline].getInstrName() == "LSR") {
+    if (PGMLines[pgmline].getInstrName() == "LSR") {
           long long storeRegValue = getRFILE(PGMLines[pgmline].getStoreReg());
           long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
           long long secondOpValue = PGMLines[pgmline].getSecondOperand();
@@ -298,7 +298,32 @@ void legv8Sim::runLine() {
           }
           setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
 		}
-		pgmline++;
+
+    if (PGMLines[pgmline].getInstrName() == "B") {
+
+        pgmline = PGMLines[pgmline].getStoreReg();
+    }
+
+    if (PGMLines[pgmline].getInstrName() == "BR") {
+
+        if (PGMLines[pgmline].getStoreReg() == 30)
+            pgmline = getRFILE(PGMLines[pgmline].getStoreReg());
+    }
+
+    if (PGMLines[pgmline].getInstrName() == "CBZ") {
+
+        if (getRFILE(PGMLines[pgmline].getStoreReg()) == 0)
+            pgmline = PGMLines[pgmline].getFirstOperand();
+    }
+
+    if (PGMLines[pgmline].getInstrName() == "CBNZ") {
+
+        // CBNZ
+        if (getRFILE(PGMLines[pgmline].getStoreReg()) != 0)
+            pgmline = PGMLines[pgmline].getFirstOperand();
+    }
+
+    pgmline++;
     }
  
 }
