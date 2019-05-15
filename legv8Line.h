@@ -7,7 +7,8 @@ class legv8Line {
 
 	public:
 		legv8Line() {instrName = "", storeReg = 0, firstOperand = 0, secondOperand = 0,
-						isfirstImmediate = false, isSecondImmediate = false; };
+						isfirstImmediate = false, isSecondImmediate = false,
+	       					isSecondOperandLabel = false; secondOperand_Label = "";};
 		const std::string &getInstrName() const;
 		void setInstrName(const std::string &instrName);
 		int getStoreReg() const;
@@ -21,40 +22,25 @@ class legv8Line {
 		std::string instrName;
 		int storeReg, firstOperand, secondOperand;
 		std::string secondOperand_Label;
-		bool v, c, n, z;
-	    bool isfirstImmediate, isSecondImmediate, isSecondOperandLabel;
+		bool isfirstImmediate, isSecondImmediate, isSecondOperandLabel;
 public:
-	const std::string &getSecondOperand_Label() const;
-
-	void setSecondOperand_Label(const std::string &secondOperand_Label);
-
 	bool isIsfirstImmediate() const;
 
 	void setIsfirstImmediate(bool isfirstImmediate);
 
-	bool isIsSecondOperandLabel() const;
-
-	void setSecondOperandLabel(bool isSecondOperandLabel);
-
 	bool isIsSecondImmediate() const;
 
 	void setIsSecondImmediate(bool isSecondImmediate);
+	
+	bool isIsSecondOperandLabel() const;
 
-    bool checkV() const;
+	void setSecondOperandLabel(bool isSecondOperandLabel);
+	
+	const std::string &getSecondOperand_Label() const;
 
-    void setV(bool result);
+	void setSecondOperand_Label(const std::string &secondOperand_Label);
 
-    bool checkC() const;
 
-    void setC(bool result);
-
-    bool checkN() const;
-
-    void setN(bool result);
-
-    bool checkZ() const;
-
-    void setZ(bool result);
 };
 
 

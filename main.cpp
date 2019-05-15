@@ -11,7 +11,7 @@ int main (int argc, char *argv[]) {
 	Simulator.parseFileToVector(argv[1]);
 	Simulator.runLine();
 	// checking the RFILE to see if the register is updated correctly
-	std::cout << Simulator.getRFILE(10);
+	std::cout << Simulator.getRFILE(9);
 	std::cout << "\ntest ended\n";
 	return 0;
 }

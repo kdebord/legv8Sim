@@ -21,10 +21,10 @@ class legv8Sim {
 		void setRFILE(int index, long long value);
 		long long getRFILE(int index);
 	private:
-        struct Label {
+	struct Label {
             std::string label;
             int line_num;
-        };
+	};
 		std::vector<legv8Line> PGMLines;
 		std::vector<std::string> PGM;
 		std::vector<long long> RFILE;
