@@ -1,9 +1,9 @@
-#include "legv8Sim.h"
 #include <vector>
 #include <string>
 #include <fstream>
 #include <iostream>
 #include <cstdlib>
+#include "legv8Sim.h"
 
 void legv8Sim::parseFileToVector(std::string inputFile) {
     std::ifstream file;
