@@ -1,4 +1,0 @@
-FUN: CBZ X12, DONE
-    ADDI x9, x9, #11
-    ADDI x10, x10, #8
-    LSR x10, x10, #1
