@@ -5,6 +5,9 @@
 #include <iostream>
 #include <cstdlib>
 
+//praseFileToVector takes the input file and line by line
+//adds it to the PGM vector
+
 void legv8Sim::parseFileToVector(std::string inputFile) {
     std::ifstream file;
     file.open(inputFile);
@@ -16,29 +19,41 @@ void legv8Sim::parseFileToVector(std::string inputFile) {
     return;
 }
 
+//parseLines takes a string from PGM which represents one line
+//of legv8 assembly, and parses it to a more workable legv8Line class object
+
 legv8Line legv8Sim::parseLine(int lineToGrab) {
+    //create the strong to be iterated through
     std::string pgmLine = PGM[lineToGrab];
 
+    //create the lev8line that will eventually be returned
     legv8Line lineToReturn;
+
+    //handling for tabs or spaces used in place of tabs in front of lines
     std::string::iterator iter = pgmLine.begin();
     if(*iter == '\t')
         iter++;
     else if(*iter == ' ')
         iter += 4;
+    //check to catch mis-formatted blank lines in file
     else if(*iter == '\000')
     {
         std::cout << "Blank line in input file, exiting";
         exit(1);
     }
 
+    //iterates through the first "token" of the line
     std::string instrOrLabel;
     while(*iter != ' ')
     {
         instrOrLabel += *iter;
         iter++;
     }
+    //finding a ':' determines if if its a instruction or the label of a assembly function
     if(instrOrLabel.back() == ':')
     {
+        //if it has a label at the front, push that to the label vector and find the next token
+        //this next token will be the instruction name
         Label newLabel;
         newLabel.label = instrOrLabel.substr(0, instrOrLabel.size() - 1);
         newLabel.line_num = lineToGrab;
@@ -53,18 +68,23 @@ legv8Line legv8Sim::parseLine(int lineToGrab) {
         lineToReturn.setInstrName(instrName);
     }
     else
+        //otherwise its just the instruction name
         lineToReturn.setInstrName(instrOrLabel);
 
     iter++;
+    //next token to be found will be the register your result is stored in
     std::string storeReg;
     while(*iter != ',')
     {
         storeReg += *iter;
         iter++;
     }
+    //this erase removes the 'x' from the beginning of the register
     storeReg.erase(0,1);
     lineToReturn.setStoreReg(std::stoi(storeReg));
+
     iter += 2;
+    //special handling for CBZ and CBNZ instructions
     if(lineToReturn.getInstrName() == "CBZ" || lineToReturn.getInstrName() == "CBNZ")
     {
         std::string secondOperandLabel;
@@ -77,6 +97,7 @@ legv8Line legv8Sim::parseLine(int lineToGrab) {
         lineToReturn.setSecondOperand_Label(secondOperandLabel);
         return lineToReturn;
     }
+    //otherwise you simply find the first and second operands
     else
     {
         std::string firstOperand;
@@ -95,7 +116,7 @@ legv8Line legv8Sim::parseLine(int lineToGrab) {
             secondOperand += *iter;
             iter++;
         }
-
+        //second operand can be a immediate, this check determines such
         if(secondOperand.front() == '#')
             lineToReturn.setIsSecondImmediate(true);
 
@@ -106,6 +127,9 @@ legv8Line legv8Sim::parseLine(int lineToGrab) {
     return lineToReturn;
 }
 
+//parseLineToPGMLine takes the stores strings from PGM, and parses them one by one
+//into the more usable legv8Line class objects
+
 void legv8Sim::parseLineToPGMLine(){
   int index = 0;
   while(index < PGM.size())
@@ -115,9 +139,18 @@ void legv8Sim::parseLineToPGMLine(){
     }
 }
 
+//runLine takes the PMGLines vector that was created, and iterates through it to run the lines
+    //needs to be altered to just run and use a helper function if you want to run all lines
+    //This will assist getting the the program to allow you to run line by line
+
 void legv8Sim::runLine() {
   int pgmline = 0;
-  parseLineToPGMLine();
+
+  //All the following instructions following a similar format, with slight differences
+  //depending on if its a immediate or non-immediate
+
+  //The getRFILE() function is used if you need the value held within the register vector at that index
+  //Otherwise, in the case of immedaites, the PGMLines[pgmline] valuse are used directly
   while (pgmline < PGMLines.size())
     {
       if(PGMLines[pgmline].getInstrName() == "ADD")
@@ -294,17 +327,18 @@ void legv8Sim::runLine() {
 		}
 
     if (PGMLines[pgmline].getInstrName() == "B") {
-
-        pgmline = PGMLines[pgmline].getStoreReg();
+        //the implentation of this needs to be double checked
+        //pgmline = PGMLines[pgmline].getStoreReg();
     }
 
     if (PGMLines[pgmline].getInstrName() == "BR") {
-
-        if (PGMLines[pgmline].getStoreReg() == 30)
-            pgmline = getRFILE(PGMLines[pgmline].getStoreReg());
+        //the implentation of this needs to be double checked
+        //if (PGMLines[pgmline].getStoreReg() == 30)
+        //    pgmline = getRFILE(PGMLines[pgmline].getStoreReg());
     }
 
     if (PGMLines[pgmline].getInstrName() == "CBZ") {
+        //the implentation of this needs to be double checked
         //These are causing some kind of seg fault when being run.
         //the first operand is never net in CBZ, just the second operand label and
         //the getStoreReg.
@@ -314,6 +348,7 @@ void legv8Sim::runLine() {
     }
 
     if (PGMLines[pgmline].getInstrName() == "CBNZ") {
+        //the implentation of this needs to be double checked
         //These are causing some kind of seg fault when being run.
         //the first operand is never net in CBZ, just the second operand label and
         //the getStoreReg.

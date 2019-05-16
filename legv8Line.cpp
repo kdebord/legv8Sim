@@ -4,6 +4,9 @@
 
 #include "legv8Line.h"
 
+//This entire file is just filled with getters and setters
+//Nothing special to see here
+
 const std::string &legv8Line::getInstrName() const {
     return instrName;
 }
