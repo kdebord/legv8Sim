@@ -9,105 +9,99 @@ void legv8Sim::parseFileToVector(std::string inputFile) {
     std::ifstream file;
     file.open(inputFile);
     std::string tempLine;
-    while( ! file.eof())
+    while( std::getline(file,tempLine) )
     {
-        std::getline(file,tempLine);
         PGM.push_back(tempLine);
     }
-
     return;
 }
 
 legv8Line legv8Sim::parseLine(int lineToGrab) {
     std::string pgmLine = PGM[lineToGrab];
+
     legv8Line lineToReturn;
-    std::string temp = "";
-    char iter = 'X';
-    int i = 0;
-	if(pgmLine[i] == ' ')
-        i += 4;
-    if(pgmLine[i] == '\t')
-		i++;
-    while(iter != ' ')
+    std::string::iterator iter = pgmLine.begin();
+    if(*iter == '\t')
+        iter++;
+    else if(*iter == ' ')
+        iter += 4;
+    else if(*iter == '\000')
     {
-        iter = pgmLine[i];
-        temp.insert(temp.end(), iter);
-        i++;
+        std::cout << "Blank line in input file, exiting";
+        exit(1);
     }
-    temp.resize(temp.size() - 1);
-	if(temp[i - 2] == ':')
+
+    std::string instrOrLabel;
+    while(*iter != ' ')
+    {
+        instrOrLabel += *iter;
+        iter++;
+    }
+    if(instrOrLabel.back() == ':')
     {
         Label newLabel;
-        temp.resize(temp.size() - 1);
-        newLabel.label = temp;
+        newLabel.label = instrOrLabel.substr(0, instrOrLabel.size() - 1);
         newLabel.line_num = lineToGrab;
         LABELS.push_back(newLabel);
-
-        temp = "";
-        iter = pgmLine[i];
-        while(iter != ' ')
+        iter++;
+        std::string instrName;
+        while(*iter != ' ')
         {
-            iter = pgmLine[i];
-            temp.insert(temp.end(), iter);
-            i++;
+            instrName += *iter;
+            iter++;
         }
-        temp.resize(temp.size() - 1);
-	}
-    lineToReturn.setInstrName(temp);
-    temp = "";
-    iter = 'X';
-    i++;
-    while (iter != ',') {
-        iter = pgmLine[i];
-        temp.insert(temp.end(), iter);
-        i++;
+        lineToReturn.setInstrName(instrName);
     }
-    temp.resize(temp.size() - 1);
-    lineToReturn.setStoreReg(std::stoi(temp));
-		
-	if(lineToReturn.getInstrName() == "CBZ" || lineToReturn.getInstrName() == "CBNZ")
+    else
+        lineToReturn.setInstrName(instrOrLabel);
+
+    iter++;
+    std::string storeReg;
+    while(*iter != ',')
     {
-        iter = 'X';
-        temp = "";
-        i++;
-        while (isalnum(iter)) {
-            iter = pgmLine[i];
-            temp.insert(temp.end(), iter);
-            i++;
+        storeReg += *iter;
+        iter++;
+    }
+    storeReg.erase(0,1);
+    lineToReturn.setStoreReg(std::stoi(storeReg));
+    iter += 2;
+    if(lineToReturn.getInstrName() == "CBZ" || lineToReturn.getInstrName() == "CBNZ")
+    {
+        std::string secondOperandLabel;
+        while(isalnum(*iter))
+        {
+            secondOperandLabel += *iter;
+            iter++;
         }
-        lineToReturn.setSecondOperand_Label(temp);
         lineToReturn.setSecondOperandLabel(true);
+        lineToReturn.setSecondOperand_Label(secondOperandLabel);
         return lineToReturn;
-	}
+    }
+    else
+    {
+        std::string firstOperand;
+        while(*iter != ',')
+        {
+            firstOperand += *iter;
+            iter++;
+        }
+        firstOperand.erase(0,1);
+        lineToReturn.setFirstOperand(std::stoi(firstOperand));
 
-	//needs a case that if using a immediate will store as a int instead of a register
-	temp = "";
-	iter = 'X';
-	i++;
-	if(pgmLine[i] == '#')
-		lineToReturn.setIsfirstImmediate(true);
-	i++;
-	while (iter != ',') {
-		iter = pgmLine[i];
-		temp.insert(temp.end(), iter);
-		i++;
-	}
-	temp.resize(temp.size() - 1);
-	lineToReturn.setFirstOperand(std::stoi(temp));
+        std::string secondOperand;
+        iter += 2;
+        while(*iter != '\000')
+        {
+            secondOperand += *iter;
+            iter++;
+        }
 
-	temp = "";
-	iter = 'X';
-	i++;
-	if(pgmLine[i] == '#')
-		lineToReturn.setIsSecondImmediate(true);
-	i++;
-	while (isalnum(iter)) {
-		iter = pgmLine[i];
-		temp.insert(temp.end(), iter);
-		i++;
-	}
-	temp.resize(temp.size() - 1);
-	lineToReturn.setSecondOperand(std::stoi(temp));
+        if(secondOperand.front() == '#')
+            lineToReturn.setIsSecondImmediate(true);
+
+        secondOperand.erase(0,1);
+        lineToReturn.setSecondOperand(std::stoi(secondOperand));
+    }
 
     return lineToReturn;
 }
@@ -132,7 +126,7 @@ void legv8Sim::runLine() {
 	  long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
 	  long long secondOpValue = getRFILE(PGMLines[pgmline].getSecondOperand());
 	  // The following if statements check for correct instruction syntax
-	  if (!PGMLines[pgmline].isIsfirstImmediate() && !PGMLines[pgmline].isIsSecondImmediate())
+	  if (!PGMLines[pgmline].isIsSecondImmediate())
 	    storeRegValue = std::abs(firstOpValue) + std::abs(secondOpValue);
 	  else{
 	    std::cout << "ADD Instruction Syntax Incorrect: Immediate Detected";
@@ -147,7 +141,7 @@ void legv8Sim::runLine() {
 	  long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
 	  long long secondOpValue = PGMLines[pgmline].getSecondOperand();
 	  // The following if statements check for correct instruction syntax
-	  if (!PGMLines[pgmline].isIsfirstImmediate() && PGMLines[pgmline].isIsSecondImmediate())
+	  if (PGMLines[pgmline].isIsSecondImmediate())
 	    storeRegValue = std::abs(firstOpValue) + std::abs(secondOpValue);
 	  else{
 	    std::cout << "ADDI Instruction Syntax Incorrect: Immediate Expected In Second Operand";
@@ -162,7 +156,7 @@ void legv8Sim::runLine() {
 	  long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
 	  long long secondOpValue = getRFILE(PGMLines[pgmline].getSecondOperand());
 	  // The following if statements check for correct instruction syntax
-	  if (!PGMLines[pgmline].isIsfirstImmediate() && !PGMLines[pgmline].isIsSecondImmediate())
+	  if (!PGMLines[pgmline].isIsSecondImmediate())
 	    storeRegValue = std::abs(firstOpValue) - std::abs(secondOpValue);
 	  else{
 	    std::cout << "SUB Instruction Syntax Incorrect: Immediate Detected";
@@ -177,7 +171,7 @@ void legv8Sim::runLine() {
 	  long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
 	  long long secondOpValue = PGMLines[pgmline].getSecondOperand();
 	  // The following if statements check for correct instruction syntax
-	  if (!PGMLines[pgmline].isIsfirstImmediate() && PGMLines[pgmline].isIsSecondImmediate())
+	  if (PGMLines[pgmline].isIsSecondImmediate())
 	    storeRegValue = std::abs(firstOpValue) - std::abs(secondOpValue);
 	  else{
 	    std::cout << "SUBI Instruction Syntax Incorrect: Immediate Expected In Second Operand";
@@ -191,7 +185,7 @@ void legv8Sim::runLine() {
           long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
           long long secondOpValue = getRFILE(PGMLines[pgmline].getSecondOperand());
 
-          if ( ! PGMLines[pgmline].isIsfirstImmediate() && ! PGMLines[pgmline].isIsSecondImmediate())
+          if (! PGMLines[pgmline].isIsSecondImmediate())
               storeRegValue = firstOpValue & secondOpValue;
           else {
               std::cout << "AND Instruction Syntax Incorrect: Immediate Found In Syntax";
@@ -205,7 +199,7 @@ void legv8Sim::runLine() {
           long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
           long long secondOpValue = getRFILE(PGMLines[pgmline].getSecondOperand());
 
-          if ( ! PGMLines[pgmline].isIsfirstImmediate() && ! PGMLines[pgmline].isIsSecondImmediate())
+          if (! PGMLines[pgmline].isIsSecondImmediate())
               storeRegValue = firstOpValue | secondOpValue;
           else {
               std::cout << "ORR Instruction Syntax Incorrect: Immediate Found In Syntax";
@@ -219,7 +213,7 @@ void legv8Sim::runLine() {
           long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
           long long secondOpValue = getRFILE(PGMLines[pgmline].getSecondOperand());
 
-          if ( ! PGMLines[pgmline].isIsfirstImmediate() && ! PGMLines[pgmline].isIsSecondImmediate())
+          if (! PGMLines[pgmline].isIsSecondImmediate())
               storeRegValue = firstOpValue ^ secondOpValue;
           else {
               std::cout << "EOR Instruction Syntax Incorrect: Immediate Found In Syntax";
@@ -233,7 +227,7 @@ void legv8Sim::runLine() {
           long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
           long long secondOpValue = PGMLines[pgmline].getSecondOperand();
 
-          if ( ! PGMLines[pgmline].isIsfirstImmediate() && PGMLines[pgmline].isIsSecondImmediate())
+          if (PGMLines[pgmline].isIsSecondImmediate())
               storeRegValue = firstOpValue & secondOpValue;
           else {
               std::cout << "ANDI Instruction Syntax Incorrect: Immediate Expected In Syntax";
@@ -247,7 +241,7 @@ void legv8Sim::runLine() {
           long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
           long long secondOpValue = PGMLines[pgmline].getSecondOperand();
 
-          if ( ! PGMLines[pgmline].isIsfirstImmediate() && PGMLines[pgmline].isIsSecondImmediate())
+          if (PGMLines[pgmline].isIsSecondImmediate())
               storeRegValue = firstOpValue | secondOpValue;
           else {
               std::cout << "EOR Instruction Syntax Incorrect: Immediate Found In Syntax";
@@ -261,7 +255,7 @@ void legv8Sim::runLine() {
           long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
           long long secondOpValue = PGMLines[pgmline].getSecondOperand();
 
-          if ( ! PGMLines[pgmline].isIsfirstImmediate() && PGMLines[pgmline].isIsSecondImmediate())
+          if (PGMLines[pgmline].isIsSecondImmediate())
               storeRegValue = firstOpValue ^ secondOpValue;
           else {
               std::cout << "EORI Instruction Syntax Incorrect: Immediate Expected In Syntax";
@@ -276,7 +270,7 @@ void legv8Sim::runLine() {
           long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
           long long secondOpValue = PGMLines[pgmline].getSecondOperand();
 
-          if ( ! PGMLines[pgmline].isIsfirstImmediate() && PGMLines[pgmline].isIsSecondImmediate())
+          if (PGMLines[pgmline].isIsSecondImmediate())
               storeRegValue = firstOpValue << secondOpValue;
           else {
               std::cout << "EORI Instruction Syntax Incorrect: Immediate Expected In Syntax";
@@ -290,7 +284,7 @@ void legv8Sim::runLine() {
           long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
           long long secondOpValue = PGMLines[pgmline].getSecondOperand();
 
-          if ( ! PGMLines[pgmline].isIsfirstImmediate() && PGMLines[pgmline].isIsSecondImmediate())
+          if (PGMLines[pgmline].isIsSecondImmediate())
               storeRegValue = firstOpValue >> secondOpValue;
           else {
               std::cout << "EORI Instruction Syntax Incorrect: Immediate Expected In Syntax";
@@ -311,16 +305,21 @@ void legv8Sim::runLine() {
     }
 
     if (PGMLines[pgmline].getInstrName() == "CBZ") {
+        //These are causing some kind of seg fault when being run.
+        //the first operand is never net in CBZ, just the second operand label and
+        //the getStoreReg.
 
-        if (getRFILE(PGMLines[pgmline].getStoreReg()) == 0)
-            pgmline = PGMLines[pgmline].getFirstOperand();
+        //if (getRFILE(PGMLines[pgmline].getStoreReg()) == 0)
+        //    pgmline = PGMLines[pgmline].getFirstOperand();
     }
 
     if (PGMLines[pgmline].getInstrName() == "CBNZ") {
+        //These are causing some kind of seg fault when being run.
+        //the first operand is never net in CBZ, just the second operand label and
+        //the getStoreReg.
 
-        // CBNZ
-        if (getRFILE(PGMLines[pgmline].getStoreReg()) != 0)
-            pgmline = PGMLines[pgmline].getFirstOperand();
+        //if (getRFILE(PGMLines[pgmline].getStoreReg()) != 0)
+        //    pgmline = PGMLines[pgmline].getFirstOperand();
     }
 
     pgmline++;

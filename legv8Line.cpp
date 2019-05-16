@@ -36,14 +36,6 @@ void legv8Line::setSecondOperand(int secondOperand) {
     legv8Line::secondOperand = secondOperand;
 }
 
-bool legv8Line::isIsfirstImmediate() const {
-    return isfirstImmediate;
-}
-
-void legv8Line::setIsfirstImmediate(bool isfirstImmediate) {
-    legv8Line::isfirstImmediate = isfirstImmediate;
-}
-
 bool legv8Line::isIsSecondImmediate() const {
     return isSecondImmediate;
 }

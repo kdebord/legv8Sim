@@ -6,9 +6,10 @@
 class legv8Line {
 
 	public:
-		legv8Line() {instrName = "", storeReg = 0, firstOperand = 0, secondOperand = 0,
-						isfirstImmediate = false, isSecondImmediate = false,
-	       					isSecondOperandLabel = false; secondOperand_Label = "";};
+		legv8Line() {instrName = "", storeReg = -1, firstOperand = -1, secondOperand = -1,
+			   				isSecondImmediate = false, isSecondOperandLabel = false;
+							secondOperand_Label = "",
+	       					v = false, c = false, n = false, z = false; };
 		const std::string &getInstrName() const;
 		void setInstrName(const std::string &instrName);
 		int getStoreReg() const;
@@ -23,11 +24,8 @@ class legv8Line {
 		int storeReg, firstOperand, secondOperand;
 		std::string secondOperand_Label;
         bool v, c, n ,z;
-		bool isfirstImmediate, isSecondImmediate, isSecondOperandLabel;
+		bool isSecondImmediate, isSecondOperandLabel;
 public:
-	bool isIsfirstImmediate() const;
-
-	void setIsfirstImmediate(bool isfirstImmediate);
 
 	bool isIsSecondImmediate() const;
 
