@@ -1,3 +1,5 @@
+//Written By Kyle de Bord, Aidan Shirey, Jasmine De La Torre, Kiyoko Mangrobang
+
 Legv8 Interpreter
     Written in c++
 
@@ -6,4 +8,12 @@ Program take your input file as a program argument
 
 Makefile is included and can be used to create the executable
 
-You will be prompted to initialize memory
+You will be prompted to initialize memory at the beginning,
+followed by a prompt asking if you want to run step by step or run
+everything at once.
+
+Once run, you will be prompted to either access a portion of the
+memory, stack, or register vectors. You can also stop the program.
+
+If stop is selected, two files will be created, holding the
+values of the memory and register vectors.

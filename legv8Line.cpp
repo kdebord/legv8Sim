@@ -1,8 +1,6 @@
-//
-// Created by kdebo on 4/30/2019.
-//
-
 #include "legv8Line.h"
+
+//Written By Kyle de Bord, Aidan Shirey, Jasmine De La Torre, Kiyoko Mangrobang
 
 //This entire file is just filled with getters and setters
 //Nothing special to see here

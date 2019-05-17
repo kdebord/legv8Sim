@@ -5,6 +5,9 @@
 #include <iostream>
 #include <cstdlib>
 #include <algorithm>
+#include <iomanip>
+
+//Written By Kyle de Bord, Aidan Shirey, Jasmine De La Torre, Kiyoko Mangrobang
 
 //praseFileToVector takes the input file and line by line
 //adds it to the PGM vector
@@ -915,9 +918,28 @@ void legv8Sim::executeUserInput(std::string userInput)
 {
 	std::transform(userInput.begin(), userInput.end(), userInput.begin(), ::tolower);
 	if(userInput == "stop")
-		//code needed to print vectors to files
-		exit(0);
-	if(userInput.substr(0,5) == "rfile")
+	{
+        std::ofstream memFile;
+        memFile.open("Memory_File.txt");
+        memFile << "Memory Values\n";
+        for(int i = 0; i < MEM.size(); i++)
+        {
+            memFile << std::setw(3) << i << "   " << MEM[i] << std::endl;
+        }
+        memFile.close();
+
+        std::ofstream regFile;
+        regFile.open("Register_File.txt");
+        regFile << "Register Values\n";
+        for(int i = 0; i < RFILE.size(); i++)
+        {
+            regFile << std::setw(3) << i << "   " << RFILE[i] << std::endl;
+        }
+        regFile.close();
+
+        exit(0);
+    }
+	else if(userInput.substr(0,5) == "rfile")
 	{
 		std::string intToConvert;
 		for( auto iter = userInput.begin(); iter != userInput.end(); iter++)

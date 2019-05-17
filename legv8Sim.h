@@ -6,6 +6,8 @@
 #include <string>
 #include <fstream>
 
+//Written By Kyle de Bord, Aidan Shirey, Jasmine De La Torre, Kiyoko Mangrobang
+
 class legv8Sim {
 	public:
 		legv8Sim () {

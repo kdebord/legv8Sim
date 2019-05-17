@@ -3,6 +3,8 @@
 
 #include <string>
 
+//Written By Kyle de Bord, Aidan Shirey, Jasmine De La Torre, Kiyoko Mangrobang
+
 class legv8Line {
 
 	public:
