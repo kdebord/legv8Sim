@@ -25,6 +25,5 @@ int main (int argc, char *argv[]) {
 	}
 	// checking the RFILE to see if the register is updated correctly
 	//should return 16 if using the given test file
-	std::cout << "\ntest ended\n";
 	return 0;
 }

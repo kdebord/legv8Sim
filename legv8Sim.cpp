@@ -47,7 +47,7 @@ legv8Line legv8Sim::parseLine(int lineToGrab) {
 
     //iterates through the first "token" of the line
     std::string instrOrLabel;
-    while(*iter != ' ')
+    while(*iter != ' ' && *iter != '\000')
     {
         instrOrLabel += *iter;
         iter++;
@@ -63,13 +63,16 @@ legv8Line legv8Sim::parseLine(int lineToGrab) {
         LABELS.push_back(newLabel);
         iter++;
         std::string instrName;
-        while(*iter != ' ')
+        while(*iter != ' ' && *iter != '\000')
         {
             instrName += *iter;
             iter++;
         }
         lineToReturn.setInstrName(instrName);
+        if(*iter == '\000')
+        	return lineToReturn;
     }
+
     else
         //otherwise its just the instruction name
         lineToReturn.setInstrName(instrOrLabel);
@@ -82,6 +85,20 @@ legv8Line legv8Sim::parseLine(int lineToGrab) {
         storeReg += *iter;
         iter++;
     }
+	if(lineToReturn.getInstrName() == "B" || lineToReturn.getInstrName() == "BL")
+	{
+		std::string label;
+		while(*iter != ' ' && *iter != '\000')
+		{
+			label += *iter;
+			iter++;
+		}
+		lineToReturn.setSecondOperand_Label(label);
+		lineToReturn.setSecondOperandLabel(true);
+		return lineToReturn;
+	}
+
+
     //this erase removes the 'x' from the beginning of the register
     storeReg.erase(0,1);
     lineToReturn.setStoreReg(std::stoi(storeReg));
@@ -92,8 +109,7 @@ legv8Line legv8Sim::parseLine(int lineToGrab) {
       }
     iter += 2;
     //special handling for CBZ and CBNZ instructions
-    if(lineToReturn.getInstrName() == "CBZ" || lineToReturn.getInstrName() == "CBNZ"
-       || lineToReturn.getInstrName() == "BL" || lineToReturn.getInstrName() == "B")
+    if(lineToReturn.getInstrName() == "CBZ" || lineToReturn.getInstrName() == "CBNZ")
     {
         std::string secondOperandLabel;
         while(isalnum(*iter))
