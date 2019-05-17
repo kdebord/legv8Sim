@@ -33,8 +33,10 @@ legv8Line legv8Sim::parseLine(int lineToGrab) {
     std::string::iterator iter = pgmLine.begin();
     if(*iter == '\t')
         iter++;
-    else if(*iter == ' ')
-        iter += 4;
+    else if(*iter == ' '){ 
+      while (*iter == ' ')
+	*iter++;
+    }
     //check to catch mis-formatted blank lines in file
     else if(*iter == '\000')
     {
