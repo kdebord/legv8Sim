@@ -77,7 +77,7 @@ legv8Line legv8Sim::parseLine(int lineToGrab) {
     iter++;
     //next token to be found will be the register your result is stored in
     std::string storeReg;
-    while(*iter != ',')
+    while(*iter != ',' && *iter != '\000')
     {
         storeReg += *iter;
         iter++;
@@ -88,7 +88,7 @@ legv8Line legv8Sim::parseLine(int lineToGrab) {
 
     if (lineToReturn.getInstrName() == "BR")
       {
-	return lineToReturn;
+			return lineToReturn;
       }
     iter += 2;
     //special handling for CBZ and CBNZ instructions
