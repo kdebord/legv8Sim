@@ -178,7 +178,7 @@ void legv8Sim::runLine() {
           if (!PGMLines[pgmline].isIsSecondImmediate())
               storeRegValue = std::abs(firstOpValue) + std::abs(secondOpValue);
           else {
-              std::cout << "ADD Instruction Syntax Incorrect: Immediate Detected";
+              std::cout << "ADDS Instruction Syntax Incorrect: Immediate Detected";
               exit(1);
           }
           setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
@@ -243,7 +243,7 @@ void legv8Sim::runLine() {
           if (PGMLines[pgmline].isIsSecondImmediate())
               storeRegValue = std::abs(firstOpValue) + std::abs(secondOpValue);
           else {
-              std::cout << "ADDI Instruction Syntax Incorrect: Immediate Expected In Second Operand";
+              std::cout << "ADDIS Instruction Syntax Incorrect: Immediate Expected In Second Operand";
               exit(1);
           }
           setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
@@ -305,7 +305,7 @@ void legv8Sim::runLine() {
           if (!PGMLines[pgmline].isIsSecondImmediate())
               storeRegValue = std::abs(firstOpValue) - std::abs(secondOpValue);
           else {
-              std::cout << "SUB Instruction Syntax Incorrect: Immediate Detected";
+              std::cout << "SUBS Instruction Syntax Incorrect: Immediate Detected";
               exit(1);
           }
           setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
@@ -366,7 +366,7 @@ void legv8Sim::runLine() {
           if (PGMLines[pgmline].isIsSecondImmediate())
               storeRegValue = std::abs(firstOpValue) - std::abs(secondOpValue);
           else {
-              std::cout << "SUB Instruction Syntax Incorrect: Immediate Detected";
+              std::cout << "SUBIS Instruction Syntax Incorrect: Immediate Expected In Second Operand";
               exit(1);
           }
           setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
