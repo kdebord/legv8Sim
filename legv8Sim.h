@@ -12,8 +12,10 @@ class legv8Sim {
 			for(int i = 0; i < 32; i++)
 			{
 				RFILE.push_back(0);
+				MEM.push_back(0);
 			}
 		};
+		void initilzieMemory();
 		legv8Line parseLine(int lineToGrab);
 		void parseFileToVector(std::string inputFile);
 		void parseLineToPGMLine();
@@ -22,6 +24,7 @@ class legv8Sim {
 		void runLine();
 		void setRFILE(int index, long long value);
 		long long getRFILE(int index);
+
 	private:
 	struct Label {
             std::string label;
@@ -31,10 +34,10 @@ class legv8Sim {
 		std::vector<std::string> PGM;
 		std::vector<long long> RFILE;
 		std::vector<Label> LABELS;
+		std::vector<int> MEM;
 		bool stepByStep;
 public:
 	bool isStepByStep() const;
-
 	void setStepByStep(bool stepByStep);
 };
 

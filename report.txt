@@ -1,0 +1,9 @@
+Legv8 Interpreter
+    Written in c++
+
+Program take your input file as a program argument
+    e.g.  "./legv8Sim test.txt"
+
+Makefile is included and can be used to create the executable
+
+You will be prompted to initialize memory

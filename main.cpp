@@ -8,6 +8,7 @@ int main (int argc, char *argv[]) {
 		exit(1);
 	}
 	legv8Sim Simulator;
+	Simulator.initilzieMemory();
 	Simulator.parseFileToVector(argv[1]);
 	Simulator.parseLineToPGMLine();
 	std::cout << "Step By Step (1) or Run All (0):  ";

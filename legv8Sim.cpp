@@ -951,3 +951,30 @@ bool legv8Sim::isStepByStep() const {
 void legv8Sim::setStepByStep(bool stepByStep) {
 	legv8Sim::stepByStep = stepByStep;
 }
+
+void legv8Sim::initilzieMemory()
+{
+	std::cout << "Enter wanted memory values:\n";
+	std::cout << "e.g. \"i1, v1, i2, v2 sets MEM[i1] = v1, MEM[i2] = v2\n";
+	std::string memToSet, memIndex, memValue;
+	std::getline(std::cin, memToSet);
+	if( memToSet.empty() )
+		return;
+	auto iter = memToSet.begin();
+	while(iter != memToSet.end() && *iter != '\000') {
+		memIndex = "";
+		memValue = "";
+		while (*iter != ',') {
+			memIndex += *iter;
+			iter++;
+		}
+		iter++, iter++;
+		while(*iter != ',' && *iter != '\000')
+		{
+			memValue += *iter;
+			iter++;
+		}
+		iter++, iter++;
+		MEM[std::stoi(memIndex) - 1] = std::stoi(memValue);
+	}
+}

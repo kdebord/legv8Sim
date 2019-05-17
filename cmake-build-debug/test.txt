@@ -1,0 +1,5 @@
+FUN: CBZ X0, DONE
+    ADDI X0, X31, #12
+    SUBI X0, X0, #8
+    B FUN
+DONE:
