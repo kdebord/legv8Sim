@@ -1,4 +1,0 @@
-FUN: ADDI x10, x10, #4
-     LSL x10, x10, #2
-     SUBI x10, x10, #1
-     CBNZ x10, FUN
