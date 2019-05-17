@@ -1,2 +1,3 @@
 FUN: ADDI x10, x10, #4
-           LSL x10, x10, #1              
+     LSL x10, x10, #1              
+     CBZ x10, FUN

@@ -601,7 +601,7 @@ void legv8Sim::runLine() {
           // BL SYNTAX: BL label
           // store instruction name and only set second operand as a label
           setRFILE(30, pgmline + 1);
-          if (pgmline < PGMLines.size() && PGMLines[pgmline].isIsSecondOperandLabel()) {
+          if (PGMLines[pgmline].isIsSecondOperandLabel()) {
               // if the second operand is a label, we search the label vector
               // and make the pgmline equal the labels corresponding line_num
               std::string labelname = PGMLines[pgmline].getSecondOperand_Label();
@@ -609,16 +609,17 @@ void legv8Sim::runLine() {
                   if (LABELS[i].label == labelname)
                       pgmline = LABELS[i].line_num;
               }
-          }
-	  pgmline--;
+	      pgmline--;
+	  }
       }
 
       if (PGMLines[pgmline].getInstrName() == "BR" ) {
           // BR SYNTAX: BR x30
           // store instruction name as BR and set store register with value 30
-          if (PGMLines[pgmline].getStoreReg() == 30)
-              pgmline = getRFILE(PGMLines[pgmline].getStoreReg());
+	if (PGMLines[pgmline].getStoreReg() == 30){
+	  pgmline = getRFILE(PGMLines[pgmline].getStoreReg());
 	  pgmline--;
+	}
       }
 
       if (PGMLines[pgmline].getInstrName() == "CBZ") {
@@ -633,21 +634,22 @@ void legv8Sim::runLine() {
                       if (LABELS[i].label == labelname)
                           pgmline = LABELS[i].line_num;
                   }
+		  pgmline--;
               }
-	  pgmline--;
       }
 
       if (PGMLines[pgmline].getInstrName() == "CBNZ") {
-          // see CBNZ for line construction information
-          if (getRFILE(PGMLines[pgmline].getStoreReg()) != 0)
-              if (PGMLines[pgmline].isIsSecondOperandLabel()) {
-                  std::string labelname = PGMLines[pgmline].getSecondOperand_Label();
-                  for (int i = 0; i < LABELS.size(); i++) {
-                      if (LABELS[i].label == labelname)
-                          pgmline = LABELS[i].line_num;
-                  }
-              }
-	  pgmline--;
+	// see CBNZ for line construction information
+	if (getRFILE(PGMLines[pgmline].getStoreReg()) != 0){
+	  if (PGMLines[pgmline].isIsSecondOperandLabel()) {
+	    std::string labelname = PGMLines[pgmline].getSecondOperand_Label();
+	    for (int i = 0; i < LABELS.size(); i++) {
+	      if (LABELS[i].label == labelname)
+		pgmline = LABELS[i].line_num;
+	    }
+	    pgmline--;
+	  }
+	}
       }
       pgmline++;
     }
