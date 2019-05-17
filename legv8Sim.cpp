@@ -12,7 +12,7 @@ void legv8Sim::parseFileToVector(std::string inputFile) {
     std::ifstream file;
     file.open(inputFile);
     std::string tempLine;
-    while( std::getline(file,tempLine) )
+    while(std::getline(file,tempLine))
     {
         PGM.push_back(tempLine);
     }
@@ -116,7 +116,7 @@ legv8Line legv8Sim::parseLine(int lineToGrab) {
 
         std::string secondOperand;
         iter += 2;
-        while(*iter != '\000')
+        while(*iter != '\000' && *iter != ' ')
         {
             secondOperand += *iter;
             iter++;
