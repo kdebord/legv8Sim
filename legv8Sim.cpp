@@ -668,12 +668,224 @@ void legv8Sim::runLine() {
 	  }
 	}
       }
-      if(stepByStep)
-	  {
-      	std::string input = promtForUserInput();
-      	executeUserInput(input);
 
-	  }
+      if (PGMLines[pgmline].getInstrName() == "B.EQ")
+	{
+	  if(PGMLines[pgmline-1].checkZ() == true)
+	    if (PGMLines[pgmline].isIsSecondOperandLabel())
+	      {
+		std::string labelname = PGMLines[pgmline].getSecondOperand_Label();
+		for (int i = 0; i < LABELS.size(); i++) {
+		  if (LABELS[i].label == labelname)
+		    pgmline = LABELS[i].line_num;
+		}
+		pgmline--;
+	      }
+	}
+
+      if (PGMLines[pgmline].getInstrName() == "B.NE")
+	{
+	  if(PGMLines[pgmline-1].checkZ() == false)
+	    if (PGMLines[pgmline].isIsSecondOperandLabel())
+	      {
+		std::string labelname = PGMLines[pgmline].getSecondOperand_Label();
+		for (int i = 0; i < LABELS.size(); i++) {
+		  if (LABELS[i].label == labelname)
+		    pgmline = LABELS[i].line_num;
+		}
+		pgmline--;
+	      }
+	}
+
+      if (PGMLines[pgmline].getInstrName() == "B.HS")
+	{
+	  if(PGMLines[pgmline-1].checkC() == true)
+	    if (PGMLines[pgmline].isIsSecondOperandLabel())
+	      {
+		std::string labelname = PGMLines[pgmline].getSecondOperand_Label();
+		for (int i = 0; i < LABELS.size(); i++) {
+		  if (LABELS[i].label == labelname)
+		    pgmline = LABELS[i].line_num;
+		}
+		pgmline--;
+	      }
+	}
+
+      if (PGMLines[pgmline].getInstrName() == "B.LO")
+	{
+	  if(PGMLines[pgmline-1].checkC() == false)
+	    if (PGMLines[pgmline].isIsSecondOperandLabel())
+	      {
+		std::string labelname = PGMLines[pgmline].getSecondOperand_Label();
+		for (int i = 0; i < LABELS.size(); i++) {
+		  if (LABELS[i].label == labelname)
+		    pgmline = LABELS[i].line_num;
+		}
+		pgmline--;
+	      }
+	}
+
+      if (PGMLines[pgmline].getInstrName() == "B.MI")
+	{
+	  if(PGMLines[pgmline-1].checkN() == true)
+	    if (PGMLines[pgmline].isIsSecondOperandLabel())
+	      {
+		std::string labelname = PGMLines[pgmline].getSecondOperand_Label();
+		for (int i = 0; i < LABELS.size(); i++) {
+		  if (LABELS[i].label == labelname)
+		    pgmline = LABELS[i].line_num;
+		}
+		pgmline--;
+	      }
+	}
+
+      if (PGMLines[pgmline].getInstrName() == "B.PL")
+	{
+	  if(PGMLines[pgmline-1].checkN() == false)
+	    if (PGMLines[pgmline].isIsSecondOperandLabel())
+	      {
+		std::string labelname = PGMLines[pgmline].getSecondOperand_Label();
+		for (int i = 0; i < LABELS.size(); i++) {
+		  if (LABELS[i].label == labelname)
+		    pgmline = LABELS[i].line_num;
+		}
+		pgmline--;
+	      }
+	}
+
+      if (PGMLines[pgmline].getInstrName() == "B.VS")
+	{
+	  if(PGMLines[pgmline-1].checkV() == true)
+	    if (PGMLines[pgmline].isIsSecondOperandLabel())
+	      {
+		std::string labelname = PGMLines[pgmline].getSecondOperand_Label();
+		for (int i = 0; i < LABELS.size(); i++) {
+		  if (LABELS[i].label == labelname)
+		    pgmline = LABELS[i].line_num;
+		}
+		pgmline--;
+	      }
+	}
+
+      if (PGMLines[pgmline].getInstrName() == "B.VC")
+	{
+	  if(PGMLines[pgmline-1].checkV() == false)
+	    if (PGMLines[pgmline].isIsSecondOperandLabel())
+	      {
+		std::string labelname = PGMLines[pgmline].getSecondOperand_Label();
+		for (int i = 0; i < LABELS.size(); i++) {
+		  if (LABELS[i].label == labelname)
+		    pgmline = LABELS[i].line_num;
+		}
+		pgmline--;
+	      }
+	}
+
+      if (PGMLines[pgmline].getInstrName() == "B.HI")
+	{
+	  if(PGMLines[pgmline-1].checkC() == true && PGMLines[pgmline-1].checkZ() == false)
+	    if (PGMLines[pgmline].isIsSecondOperandLabel())
+	      {
+		std::string labelname = PGMLines[pgmline].getSecondOperand_Label();
+		for (int i = 0; i < LABELS.size(); i++) {
+		  if (LABELS[i].label == labelname)
+		    pgmline = LABELS[i].line_num;
+		}
+		pgmline--;
+	      }
+	}
+
+      if (PGMLines[pgmline].getInstrName() == "B.LS")
+	{
+	  if(!(PGMLines[pgmline-1].checkC() == true && PGMLines[pgmline-1].checkZ() == false))
+	    if (PGMLines[pgmline].isIsSecondOperandLabel())
+	      {
+		std::string labelname = PGMLines[pgmline].getSecondOperand_Label();
+		for (int i = 0; i < LABELS.size(); i++) {
+		  if (LABELS[i].label == labelname)
+		    pgmline = LABELS[i].line_num;
+		}
+		pgmline--;
+	      }
+	}
+
+      if (PGMLines[pgmline].getInstrName() == "B.GE")
+	{
+	  if(PGMLines[pgmline-1].checkN() == PGMLines[pgmline-1].checkV())
+	    if (PGMLines[pgmline].isIsSecondOperandLabel())
+	      {
+		std::string labelname = PGMLines[pgmline].getSecondOperand_Label();
+		for (int i = 0; i < LABELS.size(); i++) {
+		  if (LABELS[i].label == labelname)
+		    pgmline = LABELS[i].line_num;
+		}
+		pgmline--;
+	      }
+	}
+
+      if (PGMLines[pgmline].getInstrName() == "B.LT")
+	{
+	  if(PGMLines[pgmline-1].checkN() != PGMLines[pgmline-1].checkV())
+	    if (PGMLines[pgmline].isIsSecondOperandLabel())
+	      {
+		std::string labelname = PGMLines[pgmline].getSecondOperand_Label();
+		for (int i = 0; i < LABELS.size(); i++) {
+		  if (LABELS[i].label == labelname)
+		    pgmline = LABELS[i].line_num;
+		}
+		pgmline--;
+	      }
+	}
+
+      if (PGMLines[pgmline].getInstrName() == "B.GT")
+	{
+	  if(PGMLines[pgmline-1].checkZ() == false
+	     && (PGMLines[pgmline-1].checkN() == PGMLines[pgmline-1].checkV()))
+	    if (PGMLines[pgmline].isIsSecondOperandLabel())
+	      {
+		std::string labelname = PGMLines[pgmline].getSecondOperand_Label();
+		for (int i = 0; i < LABELS.size(); i++) {
+		  if (LABELS[i].label == labelname)
+		    pgmline = LABELS[i].line_num;
+		}
+		pgmline--;
+	      }
+	}
+
+      if (PGMLines[pgmline].getInstrName() == "B.LE")
+	{
+	  if(!(PGMLines[pgmline-1].checkZ() == false
+	      && (PGMLines[pgmline-1].checkN() == PGMLines[pgmline-1].checkV())))
+	    if (PGMLines[pgmline].isIsSecondOperandLabel())
+	      {
+		std::string labelname = PGMLines[pgmline].getSecondOperand_Label();
+		for (int i = 0; i < LABELS.size(); i++) {
+		  if (LABELS[i].label == labelname)
+		    pgmline = LABELS[i].line_num;
+		}
+		pgmline--;
+	      }
+	}
+
+      if (PGMLines[pgmline].getInstrName() == "B.AL"
+	  || PGMLines[pgmline].getInstrName() == "B.NV")
+	{
+	  if (PGMLines[pgmline].isIsSecondOperandLabel())
+	    {
+	      std::string labelname = PGMLines[pgmline].getSecondOperand_Label();
+	      for (int i = 0; i < LABELS.size(); i++) {
+		if (LABELS[i].label == labelname)
+		  pgmline = LABELS[i].line_num;
+	      }
+	      pgmline--;
+	    }
+	}
+      
+      if(stepByStep)
+	{
+	  std::string input = promtForUserInput();
+	  executeUserInput(input);	  
+	}
       pgmline++;
     }
     
