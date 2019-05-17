@@ -17,6 +17,8 @@ class legv8Sim {
 		legv8Line parseLine(int lineToGrab);
 		void parseFileToVector(std::string inputFile);
 		void parseLineToPGMLine();
+		std::string promtForUserInput();
+		void executeUserInput(std::string userInput);
 		void runLine();
 		void setRFILE(int index, long long value);
 		long long getRFILE(int index);
@@ -29,6 +31,11 @@ class legv8Sim {
 		std::vector<std::string> PGM;
 		std::vector<long long> RFILE;
 		std::vector<Label> LABELS;
+		bool stepByStep;
+public:
+	bool isStepByStep() const;
+
+	void setStepByStep(bool stepByStep);
 };
 
 #endif

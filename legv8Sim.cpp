@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <cstdlib>
+#include <algorithm>
 
 //praseFileToVector takes the input file and line by line
 //adds it to the PGM vector
@@ -651,6 +652,12 @@ void legv8Sim::runLine() {
 	  }
 	}
       }
+      if(stepByStep)
+	  {
+      	std::string input = promtForUserInput();
+      	executeUserInput(input);
+
+	  }
       pgmline++;
     }
     
@@ -665,4 +672,54 @@ void legv8Sim::setRFILE(int index, long long value)
 long long legv8Sim::getRFILE(int index)
 {
   return RFILE[index];
+}
+
+std::string legv8Sim::promtForUserInput()
+{
+	std::cout << "Choose Option:\n";
+	std::cout << "\tMEM[#]\n\tSTK[#]\n\tRFILE[#]\n\tSTOP\n\t\tInput:  ";
+	std::string input;
+	std::cin >> input;
+	return input;
+}
+
+void legv8Sim::executeUserInput(std::string userInput)
+{
+	std::transform(userInput.begin(), userInput.end(), userInput.begin(), ::tolower);
+	if(userInput == "stop")
+		//code needed to print vectors to files
+		exit(0);
+	if(userInput.substr(0,5) == "rfile")
+	{
+		std::string intToConvert;
+		for( auto iter = userInput.begin(); iter != userInput.end(); iter++)
+		{
+			if(isdigit(*iter))
+				intToConvert += *iter;
+		}
+		int regIndex = std::stoi(intToConvert);
+		if(regIndex > 31)
+		{
+			std::cout << "Error: register value larger than 32";
+			exit(1);
+		}
+		std::cout << "RFILE[" << regIndex << "]  :  " << RFILE[regIndex] << std::endl;
+	}
+	else if(userInput.substr(0,3) == "stk")
+	{
+		std::cout << "Stack Handling not impleneted";
+	}
+	else if(userInput.substr(0,3) == "mem")
+	{
+		std::cout << "Memory Handling not impleneted";
+	}
+
+}
+
+bool legv8Sim::isStepByStep() const {
+	return stepByStep;
+}
+
+void legv8Sim::setStepByStep(bool stepByStep) {
+	legv8Sim::stepByStep = stepByStep;
 }
