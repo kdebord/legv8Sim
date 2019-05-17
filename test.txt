@@ -1,1 +1,2 @@
-ADDI x10, x10, #4
+FUN: ADDI x10, x10, #4
+           LSL x10, x10, #1              
