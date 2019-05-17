@@ -83,9 +83,14 @@ legv8Line legv8Sim::parseLine(int lineToGrab) {
     storeReg.erase(0,1);
     lineToReturn.setStoreReg(std::stoi(storeReg));
 
+    if (lineToReturn.getInstrName() == "BR")
+      {
+	return lineToReturn;
+      }
     iter += 2;
     //special handling for CBZ and CBNZ instructions
-    if(lineToReturn.getInstrName() == "CBZ" || lineToReturn.getInstrName() == "CBNZ")
+    if(lineToReturn.getInstrName() == "CBZ" || lineToReturn.getInstrName() == "CBNZ"
+       || lineToReturn.getInstrName() == "BL" || lineToReturn.getInstrName() == "B")
     {
         std::string secondOperandLabel;
         while(isalnum(*iter))
@@ -153,21 +158,23 @@ void legv8Sim::runLine() {
   //Otherwise, in the case of immedaites, the PGMLines[pgmline] valuse are used directly
   while (pgmline < PGMLines.size())
     {
-      if (PGMLines[pgmline].getInstrName() == "ADD") {
-          long long storeRegValue = getRFILE(PGMLines[pgmline].getStoreReg());
-          long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
-          long long secondOpValue = getRFILE(PGMLines[pgmline].getSecondOperand());
-          // The following if statements check for correct instruction syntax
-          if (!PGMLines[pgmline].isIsSecondImmediate())
-              storeRegValue = std::abs(firstOpValue) + std::abs(secondOpValue);
-          else {
-              std::cout << "ADD Instruction Syntax Incorrect: Immediate Detected";
-              exit(1);
-          }
-          setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
-      }
-
-      if (PGMLines[pgmline].getInstrName() == "ADDS") {
+	if (PGMLines[pgmline].getInstrName() == "ADD") {
+	  long long storeRegValue = getRFILE(PGMLines[pgmline].getStoreReg());
+	  long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
+	  long long secondOpValue = getRFILE(PGMLines[pgmline].getSecondOperand());
+	  // The following if statements check for correct instruction syntax
+	  
+	  if (!PGMLines[pgmline].isIsSecondImmediate())
+	    storeRegValue = std::abs(firstOpValue) + std::abs(secondOpValue);
+	  else {
+	    std::cout << "ADD Instruction Syntax Incorrect: Immediate Detected";
+	    exit(1);
+	  }
+	  setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
+	 
+	}
+	
+	if (PGMLines[pgmline].getInstrName() == "ADDS") {
           long long storeRegValue = getRFILE(PGMLines[pgmline].getStoreReg());
           long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
           long long secondOpValue = getRFILE(PGMLines[pgmline].getSecondOperand());
@@ -176,10 +183,10 @@ void legv8Sim::runLine() {
           unsigned long long int z1 = secondOpValue;
           // The following if statements check for correct instruction syntax
           if (!PGMLines[pgmline].isIsSecondImmediate())
-              storeRegValue = std::abs(firstOpValue) + std::abs(secondOpValue);
+	    storeRegValue = std::abs(firstOpValue) + std::abs(secondOpValue);
           else {
-              std::cout << "ADD Instruction Syntax Incorrect: Immediate Detected";
-              exit(1);
+	    std::cout << "ADD Instruction Syntax Incorrect: Immediate Detected";
+	    exit(1);
           }
           setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
           // setting V flag
@@ -213,7 +220,6 @@ void legv8Sim::runLine() {
               PGMLines[pgmline].setN(true);
           else
               PGMLines[pgmline].setN(false);
-
       }
 
 
@@ -278,7 +284,6 @@ void legv8Sim::runLine() {
               PGMLines[pgmline].setN(true);
           else
               PGMLines[pgmline].setN(false);
-
       }
 
       if (PGMLines[pgmline].getInstrName() == "SUB") {
@@ -340,8 +345,9 @@ void legv8Sim::runLine() {
               PGMLines[pgmline].setN(true);
           else
               PGMLines[pgmline].setN(false);
+	  
       }
-
+      
       if (PGMLines[pgmline].getInstrName() == "SUBI") {
           long long storeRegValue = getRFILE(PGMLines[pgmline].getStoreReg());
           long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
@@ -354,6 +360,7 @@ void legv8Sim::runLine() {
               exit(1);
           }
           setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
+	  
       }
 
       if (PGMLines[pgmline].getInstrName() == "SUBIS") {
@@ -401,6 +408,7 @@ void legv8Sim::runLine() {
               PGMLines[pgmline].setN(true);
           else
               PGMLines[pgmline].setN(false);
+	  
       }
 
       if (PGMLines[pgmline].getInstrName() == "AND") {
@@ -415,6 +423,7 @@ void legv8Sim::runLine() {
               exit(1);
           }
           setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
+	  
       }
 
       if (PGMLines[pgmline].getInstrName() == "ANDS") {
@@ -439,7 +448,7 @@ void legv8Sim::runLine() {
               PGMLines[pgmline].setN(true);
           else
               PGMLines[pgmline].setN(false);
-
+	  
       }
 
       if (PGMLines[pgmline].getInstrName() == "ORR") {
@@ -454,6 +463,7 @@ void legv8Sim::runLine() {
               exit(1);
           }
           setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
+	  
       }
 
       if (PGMLines[pgmline].getInstrName() == "EOR") {
@@ -468,6 +478,7 @@ void legv8Sim::runLine() {
               exit(1);
           }
           setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
+	  
       }
 
       if (PGMLines[pgmline].getInstrName() == "ANDI") {
@@ -482,9 +493,10 @@ void legv8Sim::runLine() {
               exit(1);
           }
           setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
+	  
       }
 
-      if (PGMLines[pgmline].getInstrName() == "ANDIS") {
+      if (PGMLines[pgmline].getInstrName() == "ANDIS" && pgmline < PGMLines.size()) {
           long long storeRegValue = getRFILE(PGMLines[pgmline].getStoreReg());
           long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
           long long secondOpValue = PGMLines[pgmline].getSecondOperand();
@@ -505,9 +517,10 @@ void legv8Sim::runLine() {
               PGMLines[pgmline].setN(true);
           else
               PGMLines[pgmline].setN(false);
+	  
       }
 
-      if (PGMLines[pgmline].getInstrName() == "ORRI") {
+      if (PGMLines[pgmline].getInstrName() == "ORRI" && pgmline < PGMLines.size()) {
           long long storeRegValue = getRFILE(PGMLines[pgmline].getStoreReg());
           long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
           long long secondOpValue = PGMLines[pgmline].getSecondOperand();
@@ -519,9 +532,10 @@ void legv8Sim::runLine() {
               exit(1);
           }
           setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
+	  
       }
 
-      if (PGMLines[pgmline].getInstrName() == "EORI") {
+      if (PGMLines[pgmline].getInstrName() == "EORI" && pgmline < PGMLines.size()) {
           long long storeRegValue = getRFILE(PGMLines[pgmline].getStoreReg());
           long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
           long long secondOpValue = PGMLines[pgmline].getSecondOperand();
@@ -533,10 +547,11 @@ void legv8Sim::runLine() {
               exit(1);
           }
           setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
+	  pgmline++;
       }
 
 
-      if (PGMLines[pgmline].getInstrName() == "LSL") {
+      if (PGMLines[pgmline].getInstrName() == "LSL" && pgmline < PGMLines.size()) {
           long long storeRegValue = getRFILE(PGMLines[pgmline].getStoreReg());
           long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
           long long secondOpValue = PGMLines[pgmline].getSecondOperand();
@@ -548,9 +563,10 @@ void legv8Sim::runLine() {
               exit(1);
           }
           setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
+	  
       }
 
-      if (PGMLines[pgmline].getInstrName() == "LSR") {
+      if (PGMLines[pgmline].getInstrName() == "LSR" && pgmline < PGMLines.size()) {
           long long storeRegValue = getRFILE(PGMLines[pgmline].getStoreReg());
           long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
           long long secondOpValue = PGMLines[pgmline].getSecondOperand();
@@ -576,13 +592,14 @@ void legv8Sim::runLine() {
                       pgmline = LABELS[i].line_num;
               }
           }
+	  pgmline--;
       }
 
-      if (PGMLines[pgmline].getInstrName() == "BL") {
+      if (PGMLines[pgmline].getInstrName() == "BL" ) {
           // BL SYNTAX: BL label
           // store instruction name and only set second operand as a label
           setRFILE(30, pgmline + 1);
-          if (PGMLines[pgmline].isIsSecondOperandLabel()) {
+          if (pgmline < PGMLines.size() && PGMLines[pgmline].isIsSecondOperandLabel()) {
               // if the second operand is a label, we search the label vector
               // and make the pgmline equal the labels corresponding line_num
               std::string labelname = PGMLines[pgmline].getSecondOperand_Label();
@@ -591,13 +608,15 @@ void legv8Sim::runLine() {
                       pgmline = LABELS[i].line_num;
               }
           }
+	  pgmline--;
       }
 
-      if (PGMLines[pgmline].getInstrName() == "BR") {
+      if (PGMLines[pgmline].getInstrName() == "BR" ) {
           // BR SYNTAX: BR x30
           // store instruction name as BR and set store register with value 30
           if (PGMLines[pgmline].getStoreReg() == 30)
               pgmline = getRFILE(PGMLines[pgmline].getStoreReg());
+	  pgmline--;
       }
 
       if (PGMLines[pgmline].getInstrName() == "CBZ") {
@@ -613,6 +632,7 @@ void legv8Sim::runLine() {
                           pgmline = LABELS[i].line_num;
                   }
               }
+	  pgmline--;
       }
 
       if (PGMLines[pgmline].getInstrName() == "CBNZ") {
@@ -625,10 +645,11 @@ void legv8Sim::runLine() {
                           pgmline = LABELS[i].line_num;
                   }
               }
+	  pgmline--;
       }
-
-    pgmline++;
+      pgmline++;
     }
+    
  
 }
 

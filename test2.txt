@@ -1,0 +1,4 @@
+ADDI x10, x10, #3
+ADDI x30, x30, #3
+BR x30
+ADD x10, x10, x10
