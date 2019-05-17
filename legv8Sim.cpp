@@ -153,72 +153,262 @@ void legv8Sim::runLine() {
   //Otherwise, in the case of immedaites, the PGMLines[pgmline] valuse are used directly
   while (pgmline < PGMLines.size())
     {
-      if(PGMLines[pgmline].getInstrName() == "ADD")
-	{
-	  long long storeRegValue = getRFILE(PGMLines[pgmline].getStoreReg());
-	  long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
-	  long long secondOpValue = getRFILE(PGMLines[pgmline].getSecondOperand());
-	  // The following if statements check for correct instruction syntax
-	  if (!PGMLines[pgmline].isIsSecondImmediate())
-	    storeRegValue = std::abs(firstOpValue) + std::abs(secondOpValue);
-	  else{
-	    std::cout << "ADD Instruction Syntax Incorrect: Immediate Detected";
-	    exit(1);
-	  }
-	  setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
-	}
-      
-      if (PGMLines[pgmline].getInstrName() == "ADDI")
-	{
-	  long long storeRegValue = getRFILE(PGMLines[pgmline].getStoreReg());
-	  long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
-	  long long secondOpValue = PGMLines[pgmline].getSecondOperand();
-	  // The following if statements check for correct instruction syntax
-	  if (PGMLines[pgmline].isIsSecondImmediate())
-	    storeRegValue = std::abs(firstOpValue) + std::abs(secondOpValue);
-	  else{
-	    std::cout << "ADDI Instruction Syntax Incorrect: Immediate Expected In Second Operand";
-	    exit(1);
-	  }
-	  setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);	  
-	}
-      
-      if (PGMLines[pgmline].getInstrName() == "SUB")
-	{
-	  long long storeRegValue = getRFILE(PGMLines[pgmline].getStoreReg());
-	  long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
-	  long long secondOpValue = getRFILE(PGMLines[pgmline].getSecondOperand());
-	  // The following if statements check for correct instruction syntax
-	  if (!PGMLines[pgmline].isIsSecondImmediate())
-	    storeRegValue = std::abs(firstOpValue) - std::abs(secondOpValue);
-	  else{
-	    std::cout << "SUB Instruction Syntax Incorrect: Immediate Detected";
-	    exit(1);
-	  }
-	  setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
-	}
-      
-      if (PGMLines[pgmline].getInstrName() == "SUBI")
-	{
-	  long long storeRegValue = getRFILE(PGMLines[pgmline].getStoreReg());
-	  long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
-	  long long secondOpValue = PGMLines[pgmline].getSecondOperand();
-	  // The following if statements check for correct instruction syntax
-	  if (PGMLines[pgmline].isIsSecondImmediate())
-	    storeRegValue = std::abs(firstOpValue) - std::abs(secondOpValue);
-	  else{
-	    std::cout << "SUBI Instruction Syntax Incorrect: Immediate Expected In Second Operand";
-	    exit(1);
-	  }
-	  setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
-	}
-	
-	if (PGMLines[pgmline].getInstrName() == "AND") {
+      if (PGMLines[pgmline].getInstrName() == "ADD") {
+          long long storeRegValue = getRFILE(PGMLines[pgmline].getStoreReg());
+          long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
+          long long secondOpValue = getRFILE(PGMLines[pgmline].getSecondOperand());
+          // The following if statements check for correct instruction syntax
+          if (!PGMLines[pgmline].isIsSecondImmediate())
+              storeRegValue = std::abs(firstOpValue) + std::abs(secondOpValue);
+          else {
+              std::cout << "ADD Instruction Syntax Incorrect: Immediate Detected";
+              exit(1);
+          }
+          setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
+      }
+
+      if (PGMLines[pgmline].getInstrName() == "ADDS") {
+          long long storeRegValue = getRFILE(PGMLines[pgmline].getStoreReg());
+          long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
+          long long secondOpValue = getRFILE(PGMLines[pgmline].getSecondOperand());
+          unsigned long long int x1 = storeRegValue;
+          unsigned long long int y1 = firstOpValue;
+          unsigned long long int z1 = secondOpValue;
+          // The following if statements check for correct instruction syntax
+          if (!PGMLines[pgmline].isIsSecondImmediate())
+              storeRegValue = std::abs(firstOpValue) + std::abs(secondOpValue);
+          else {
+              std::cout << "ADD Instruction Syntax Incorrect: Immediate Detected";
+              exit(1);
+          }
+          setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
+          // setting V flag
+          long long tempZ = std::abs(storeRegValue) + std::abs(firstOpValue);
+          setRFILE(PGMLines[pgmline].getSecondOperand(), tempZ);
+          if ((storeRegValue < 0 && firstOpValue >= 0)
+              || (storeRegValue >= 0 && firstOpValue < 0)
+              || (storeRegValue < 0 && secondOpValue >= 0)
+              || (storeRegValue >= 0 && secondOpValue < 0))
+              PGMLines[pgmline].setV(false);
+          else if (!((tempZ >= 0 && storeRegValue < 0)
+                     || (tempZ < 0 && storeRegValue >= 0)
+                     || (tempZ >= 0 && firstOpValue < 0)
+                     || (tempZ < 0 && firstOpValue >= 0)))
+              PGMLines[pgmline].setV(true);
+          else
+              PGMLines[pgmline].setV(false);
+          // check C
+          x1 = y1 + z1;
+          if (x1 < y1 || x1 < z1)
+              PGMLines[pgmline].setC(true);
+          else
+              PGMLines[pgmline].setC(false);
+          //check Z
+          if (getRFILE(PGMLines[pgmline].getStoreReg()) == 0)
+              PGMLines[pgmline].setZ(true);
+          else
+              PGMLines[pgmline].setZ(false);
+          //check N
+          if (getRFILE(PGMLines[pgmline].getStoreReg()) < 0)
+              PGMLines[pgmline].setN(true);
+          else
+              PGMLines[pgmline].setN(false);
+
+      }
+
+
+
+      if (PGMLines[pgmline].getInstrName() == "ADDI") {
+          long long storeRegValue = getRFILE(PGMLines[pgmline].getStoreReg());
+          long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
+          long long secondOpValue = PGMLines[pgmline].getSecondOperand();
+          // The following if statements check for correct instruction syntax
+          if (PGMLines[pgmline].isIsSecondImmediate())
+              storeRegValue = std::abs(firstOpValue) + std::abs(secondOpValue);
+          else {
+              std::cout << "ADDI Instruction Syntax Incorrect: Immediate Expected In Second Operand";
+              exit(1);
+          }
+          setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
+      }
+
+      if (PGMLines[pgmline].getInstrName() == "ADDIS") {
+          long long storeRegValue = getRFILE(PGMLines[pgmline].getStoreReg());
+          long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
+          long long secondOpValue = PGMLines[pgmline].getSecondOperand();
+          unsigned long long int x1 = storeRegValue;
+          unsigned long long int y1 = firstOpValue;
+          unsigned long long int z1 = secondOpValue;
+          // The following if statements check for correct instruction syntax
+          if (PGMLines[pgmline].isIsSecondImmediate())
+              storeRegValue = std::abs(firstOpValue) + std::abs(secondOpValue);
+          else {
+              std::cout << "ADDI Instruction Syntax Incorrect: Immediate Expected In Second Operand";
+              exit(1);
+          }
+          setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
+          // setting V flag
+          long long tempZ = std::abs(storeRegValue) + std::abs(firstOpValue);
+          setRFILE(PGMLines[pgmline].getSecondOperand(), tempZ);
+          if ((storeRegValue < 0 && firstOpValue >= 0)
+              || (storeRegValue >= 0 && firstOpValue < 0)
+              || (storeRegValue < 0 && secondOpValue >= 0)
+              || (storeRegValue >= 0 && secondOpValue < 0))
+              PGMLines[pgmline].setV(false);
+          else if (!((tempZ >= 0 && storeRegValue < 0)
+                     || (tempZ < 0 && storeRegValue >= 0)
+                     || (tempZ >= 0 && firstOpValue < 0)
+                     || (tempZ < 0 && firstOpValue >= 0)))
+              PGMLines[pgmline].setV(true);
+          else
+              PGMLines[pgmline].setV(false);
+          // check C
+          x1 = y1 + z1;
+          if (x1 < y1 || x1 < z1)
+              PGMLines[pgmline].setC(true);
+          else
+              PGMLines[pgmline].setC(false);
+          //check Z
+          if (getRFILE(PGMLines[pgmline].getStoreReg()) == 0)
+              PGMLines[pgmline].setZ(true);
+          else
+              PGMLines[pgmline].setZ(false);
+          //check N
+          if (getRFILE(PGMLines[pgmline].getStoreReg()) < 0)
+              PGMLines[pgmline].setN(true);
+          else
+              PGMLines[pgmline].setN(false);
+
+      }
+
+      if (PGMLines[pgmline].getInstrName() == "SUB") {
+          long long storeRegValue = getRFILE(PGMLines[pgmline].getStoreReg());
+          long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
+          long long secondOpValue = getRFILE(PGMLines[pgmline].getSecondOperand());
+          // The following if statements check for correct instruction syntax
+          if (!PGMLines[pgmline].isIsSecondImmediate())
+              storeRegValue = std::abs(firstOpValue) - std::abs(secondOpValue);
+          else {
+              std::cout << "SUB Instruction Syntax Incorrect: Immediate Detected";
+              exit(1);
+          }
+          setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
+      }
+
+      if (PGMLines[pgmline].getInstrName() == "SUBS") {
+          long long storeRegValue = getRFILE(PGMLines[pgmline].getStoreReg());
+          long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
+          long long secondOpValue = getRFILE(PGMLines[pgmline].getSecondOperand());
+          unsigned long long int x1 = storeRegValue;
+          unsigned long long int y1 = firstOpValue;
+          // The following if statements check for correct instruction syntax
+          if (!PGMLines[pgmline].isIsSecondImmediate())
+              storeRegValue = std::abs(firstOpValue) - std::abs(secondOpValue);
+          else {
+              std::cout << "SUB Instruction Syntax Incorrect: Immediate Detected";
+              exit(1);
+          }
+          setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
+          long long tempZ = secondOpValue * -1;
+          unsigned long long int z1 = secondOpValue * -1;
+          setRFILE(PGMLines[pgmline].getSecondOperand(), tempZ);
+          if ((storeRegValue < 0 && firstOpValue >= 0)
+              || (storeRegValue >= 0 && firstOpValue < 0)
+              || (storeRegValue < 0 && secondOpValue >= 0)
+              || (storeRegValue >= 0 && secondOpValue < 0))
+              PGMLines[pgmline].setV(false);
+          else if (!((tempZ >= 0 && storeRegValue < 0)
+                     || (tempZ < 0 && storeRegValue >= 0)
+                     || (tempZ >= 0 && firstOpValue < 0)
+                     || (tempZ < 0 && firstOpValue >= 0)))
+              PGMLines[pgmline].setV(true);
+          else
+              PGMLines[pgmline].setV(false);
+          // check C
+          x1 = y1 + z1;
+          if (x1 < y1 || x1 < z1)
+              PGMLines[pgmline].setC(true);
+          else
+              PGMLines[pgmline].setC(false);
+          //check Z
+          if (getRFILE(PGMLines[pgmline].getStoreReg()) == 0)
+              PGMLines[pgmline].setZ(true);
+          else
+              PGMLines[pgmline].setZ(false);
+          //check N
+          if (getRFILE(PGMLines[pgmline].getStoreReg()) < 0)
+              PGMLines[pgmline].setN(true);
+          else
+              PGMLines[pgmline].setN(false);
+      }
+
+      if (PGMLines[pgmline].getInstrName() == "SUBI") {
+          long long storeRegValue = getRFILE(PGMLines[pgmline].getStoreReg());
+          long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
+          long long secondOpValue = PGMLines[pgmline].getSecondOperand();
+          // The following if statements check for correct instruction syntax
+          if (PGMLines[pgmline].isIsSecondImmediate())
+              storeRegValue = std::abs(firstOpValue) - std::abs(secondOpValue);
+          else {
+              std::cout << "SUBI Instruction Syntax Incorrect: Immediate Expected In Second Operand";
+              exit(1);
+          }
+          setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
+      }
+
+      if (PGMLines[pgmline].getInstrName() == "SUBIS") {
+          long long storeRegValue = getRFILE(PGMLines[pgmline].getStoreReg());
+          long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
+          long long secondOpValue = PGMLines[pgmline].getSecondOperand();
+          unsigned long long int x1 = storeRegValue;
+          unsigned long long int y1 = firstOpValue;
+          // The following if statements check for correct instruction syntax
+          if (PGMLines[pgmline].isIsSecondImmediate())
+              storeRegValue = std::abs(firstOpValue) - std::abs(secondOpValue);
+          else {
+              std::cout << "SUB Instruction Syntax Incorrect: Immediate Detected";
+              exit(1);
+          }
+          setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
+          long long tempZ = secondOpValue * -1;
+          unsigned long long int z1 = secondOpValue * -1;
+          setRFILE(PGMLines[pgmline].getSecondOperand(), tempZ);
+          if ((storeRegValue < 0 && firstOpValue >= 0)
+              || (storeRegValue >= 0 && firstOpValue < 0)
+              || (storeRegValue < 0 && secondOpValue >= 0)
+              || (storeRegValue >= 0 && secondOpValue < 0))
+              PGMLines[pgmline].setV(false);
+          else if (!((tempZ >= 0 && storeRegValue < 0)
+                     || (tempZ < 0 && storeRegValue >= 0)
+                     || (tempZ >= 0 && firstOpValue < 0)
+                     || (tempZ < 0 && firstOpValue >= 0)))
+              PGMLines[pgmline].setV(true);
+          else
+              PGMLines[pgmline].setV(false);
+          // check C
+          x1 = y1 + z1;
+          if (x1 < y1 || x1 < z1)
+              PGMLines[pgmline].setC(true);
+          else
+              PGMLines[pgmline].setC(false);
+          //check Z
+          if (getRFILE(PGMLines[pgmline].getStoreReg()) == 0)
+              PGMLines[pgmline].setZ(true);
+          else
+              PGMLines[pgmline].setZ(false);
+          //check N
+          if (getRFILE(PGMLines[pgmline].getStoreReg()) < 0)
+              PGMLines[pgmline].setN(true);
+          else
+              PGMLines[pgmline].setN(false);
+      }
+
+      if (PGMLines[pgmline].getInstrName() == "AND") {
           long long storeRegValue = getRFILE(PGMLines[pgmline].getStoreReg());
           long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
           long long secondOpValue = getRFILE(PGMLines[pgmline].getSecondOperand());
 
-          if (! PGMLines[pgmline].isIsSecondImmediate())
+          if (!PGMLines[pgmline].isIsSecondImmediate())
               storeRegValue = firstOpValue & secondOpValue;
           else {
               std::cout << "AND Instruction Syntax Incorrect: Immediate Found In Syntax";
@@ -227,12 +417,37 @@ void legv8Sim::runLine() {
           setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
       }
 
+      if (PGMLines[pgmline].getInstrName() == "ANDS") {
+          long long storeRegValue = getRFILE(PGMLines[pgmline].getStoreReg());
+          long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
+          long long secondOpValue = getRFILE(PGMLines[pgmline].getSecondOperand());
+
+          if (!PGMLines[pgmline].isIsSecondImmediate())
+              storeRegValue = firstOpValue & secondOpValue;
+          else {
+              std::cout << "AND Instruction Syntax Incorrect: Immediate Found In Syntax";
+              exit(1);
+          }
+          setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
+          //check Z
+          if (getRFILE(PGMLines[pgmline].getStoreReg()) == 0)
+              PGMLines[pgmline].setZ(true);
+          else
+              PGMLines[pgmline].setZ(false);
+          //check N
+          if (getRFILE(PGMLines[pgmline].getStoreReg()) < 0)
+              PGMLines[pgmline].setN(true);
+          else
+              PGMLines[pgmline].setN(false);
+
+      }
+
       if (PGMLines[pgmline].getInstrName() == "ORR") {
           long long storeRegValue = getRFILE(PGMLines[pgmline].getStoreReg());
           long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
           long long secondOpValue = getRFILE(PGMLines[pgmline].getSecondOperand());
 
-          if (! PGMLines[pgmline].isIsSecondImmediate())
+          if (!PGMLines[pgmline].isIsSecondImmediate())
               storeRegValue = firstOpValue | secondOpValue;
           else {
               std::cout << "ORR Instruction Syntax Incorrect: Immediate Found In Syntax";
@@ -246,7 +461,7 @@ void legv8Sim::runLine() {
           long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
           long long secondOpValue = getRFILE(PGMLines[pgmline].getSecondOperand());
 
-          if (! PGMLines[pgmline].isIsSecondImmediate())
+          if (!PGMLines[pgmline].isIsSecondImmediate())
               storeRegValue = firstOpValue ^ secondOpValue;
           else {
               std::cout << "EOR Instruction Syntax Incorrect: Immediate Found In Syntax";
@@ -267,6 +482,29 @@ void legv8Sim::runLine() {
               exit(1);
           }
           setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
+      }
+
+      if (PGMLines[pgmline].getInstrName() == "ANDIS") {
+          long long storeRegValue = getRFILE(PGMLines[pgmline].getStoreReg());
+          long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
+          long long secondOpValue = PGMLines[pgmline].getSecondOperand();
+
+          if (PGMLines[pgmline].isIsSecondImmediate())
+              storeRegValue = firstOpValue & secondOpValue;
+          else {
+              std::cout << "ANDI Instruction Syntax Incorrect: Immediate Expected In Syntax";
+              exit(1);
+          }
+          setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
+          if (getRFILE(PGMLines[pgmline].getStoreReg()) == 0)
+              PGMLines[pgmline].setZ(true);
+          else
+              PGMLines[pgmline].setZ(false);
+          //check N
+          if (getRFILE(PGMLines[pgmline].getStoreReg()) < 0)
+              PGMLines[pgmline].setN(true);
+          else
+              PGMLines[pgmline].setN(false);
       }
 
       if (PGMLines[pgmline].getInstrName() == "ORRI") {
@@ -295,15 +533,15 @@ void legv8Sim::runLine() {
               exit(1);
           }
           setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
-		}
-      
-	
-	if (PGMLines[pgmline].getInstrName() == "LSL") {
+      }
+
+
+      if (PGMLines[pgmline].getInstrName() == "LSL") {
           long long storeRegValue = getRFILE(PGMLines[pgmline].getStoreReg());
           long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
           long long secondOpValue = PGMLines[pgmline].getSecondOperand();
 
-          if (PGMLines[pgmline].isIsSecondImmediate())
+          if ( PGMLines[pgmline].isIsSecondImmediate())
               storeRegValue = firstOpValue << secondOpValue;
           else {
               std::cout << "EORI Instruction Syntax Incorrect: Immediate Expected In Syntax";
@@ -312,7 +550,7 @@ void legv8Sim::runLine() {
           setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
       }
 
-    if (PGMLines[pgmline].getInstrName() == "LSR") {
+      if (PGMLines[pgmline].getInstrName() == "LSR") {
           long long storeRegValue = getRFILE(PGMLines[pgmline].getStoreReg());
           long long firstOpValue = getRFILE(PGMLines[pgmline].getFirstOperand());
           long long secondOpValue = PGMLines[pgmline].getSecondOperand();
@@ -324,38 +562,70 @@ void legv8Sim::runLine() {
               exit(1);
           }
           setRFILE(PGMLines[pgmline].getStoreReg(), storeRegValue);
-		}
+      }
 
-    if (PGMLines[pgmline].getInstrName() == "B") {
-        //the implentation of this needs to be double checked
-        //pgmline = PGMLines[pgmline].getStoreReg();
-    }
+      if (PGMLines[pgmline].getInstrName() == "B") {
+          // B SYNTAX: B label
+          // set the instruction name and set the second operand to be the label name using setSecondOperand_Label()
+          if (PGMLines[pgmline].isIsSecondOperandLabel()) {
+              // if the second operand is a label, we search the label vector
+              // and make the pgmline equal the labels corresponding line_num
+              std::string labelname = PGMLines[pgmline].getSecondOperand_Label();
+              for (int i = 0; i < LABELS.size(); i++) {
+                  if (LABELS[i].label == labelname)
+                      pgmline = LABELS[i].line_num;
+              }
+          }
+      }
 
-    if (PGMLines[pgmline].getInstrName() == "BR") {
-        //the implentation of this needs to be double checked
-        //if (PGMLines[pgmline].getStoreReg() == 30)
-        //    pgmline = getRFILE(PGMLines[pgmline].getStoreReg());
-    }
+      if (PGMLines[pgmline].getInstrName() == "BL") {
+          // BL SYNTAX: BL label
+          // store instruction name and only set second operand as a label
+          setRFILE(30, pgmline + 1);
+          if (PGMLines[pgmline].isIsSecondOperandLabel()) {
+              // if the second operand is a label, we search the label vector
+              // and make the pgmline equal the labels corresponding line_num
+              std::string labelname = PGMLines[pgmline].getSecondOperand_Label();
+              for (int i = 0; i < LABELS.size(); i++) {
+                  if (LABELS[i].label == labelname)
+                      pgmline = LABELS[i].line_num;
+              }
+          }
+      }
 
-    if (PGMLines[pgmline].getInstrName() == "CBZ") {
-        //the implentation of this needs to be double checked
-        //These are causing some kind of seg fault when being run.
-        //the first operand is never net in CBZ, just the second operand label and
-        //the getStoreReg.
+      if (PGMLines[pgmline].getInstrName() == "BR") {
+          // BR SYNTAX: BR x30
+          // store instruction name as BR and set store register with value 30
+          if (PGMLines[pgmline].getStoreReg() == 30)
+              pgmline = getRFILE(PGMLines[pgmline].getStoreReg());
+      }
 
-        //if (getRFILE(PGMLines[pgmline].getStoreReg()) == 0)
-        //    pgmline = PGMLines[pgmline].getFirstOperand();
-    }
+      if (PGMLines[pgmline].getInstrName() == "CBZ") {
+          // CBZ SYNTAX : CBZ x0, DONE
+          // store x0 in store register, and set the second operand to be the label with the correct labelname
+          if (getRFILE(PGMLines[pgmline].getStoreReg()) == 0)
+              if (PGMLines[pgmline].isIsSecondOperandLabel()) {
+                  // if the second operand is a label, we search the label vector
+                  // and make the pgmline equal the labels corresponding line_num
+                  std::string labelname = PGMLines[pgmline].getSecondOperand_Label();
+                  for (int i = 0; i < LABELS.size(); i++) {
+                      if (LABELS[i].label == labelname)
+                          pgmline = LABELS[i].line_num;
+                  }
+              }
+      }
 
-    if (PGMLines[pgmline].getInstrName() == "CBNZ") {
-        //the implentation of this needs to be double checked
-        //These are causing some kind of seg fault when being run.
-        //the first operand is never net in CBZ, just the second operand label and
-        //the getStoreReg.
-
-        //if (getRFILE(PGMLines[pgmline].getStoreReg()) != 0)
-        //    pgmline = PGMLines[pgmline].getFirstOperand();
-    }
+      if (PGMLines[pgmline].getInstrName() == "CBNZ") {
+          // see CBNZ for line construction information
+          if (getRFILE(PGMLines[pgmline].getStoreReg()) != 0)
+              if (PGMLines[pgmline].isIsSecondOperandLabel()) {
+                  std::string labelname = PGMLines[pgmline].getSecondOperand_Label();
+                  for (int i = 0; i < LABELS.size(); i++) {
+                      if (LABELS[i].label == labelname)
+                          pgmline = LABELS[i].line_num;
+                  }
+              }
+      }
 
     pgmline++;
     }

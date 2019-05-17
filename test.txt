@@ -1,5 +1,1 @@
-FUN: CBZ X0, DONE
-	ADDI x10, x10, #4
-	ADDI x11, x11, #4
-	ADD x12, x10, x11
-    LSL x12, x12, #1
+ADDI x10, x10, #4

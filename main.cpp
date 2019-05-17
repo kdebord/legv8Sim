@@ -13,7 +13,7 @@ int main (int argc, char *argv[]) {
 	Simulator.runLine();
 	// checking the RFILE to see if the register is updated correctly
 	//should return 16 if using the given test file
-	std::cout << Simulator.getRFILE(12);
+	std::cout << Simulator.getRFILE(10);
 	std::cout << "\ntest ended\n";
 	return 0;
 }
